@@ -3,6 +3,8 @@ import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-d
 import { Home } from './pages/Home';
 import { EventList } from './pages/EventList';
 import { EventDetail } from './pages/EventDetail';
+import { Auth } from './pages/Auth';
+import { History } from './pages/History';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 
@@ -26,6 +28,8 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/events" element={<EventList />} />
             <Route path="/event/:slug" element={<EventDetail />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/history" element={<History />} />
           </Routes>
         </main>
         <Footer />

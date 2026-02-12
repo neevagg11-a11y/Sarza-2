@@ -63,7 +63,11 @@ export const Home: React.FC = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {VIBES.map((vibe) => (
-                    <div key={vibe.id} className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer">
+                    <div
+                      key={vibe.id}
+                      className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer"
+                      onClick={() => (window.location.hash = '#/events')}
+                    >
                         <img src={vibe.image} alt={vibe.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
                         <div className="absolute bottom-0 left-0 p-4 w-full">

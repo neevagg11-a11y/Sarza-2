@@ -1,14 +1,83 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EVENTS } from '../constants';
 import { MapPin, Calendar, Clock, PlayCircle, Users, Activity, Heart, Share2, Info } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 
 export const EventDetail: React.FC = () => {
-  // Using the first event as the demo
-  const event = EVENTS[0];
-  const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
+  const { slug } = useParams();
+  const event = EVENTS.find(e => e.slug === slug) || EVENTS[0];
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
   const [ticketQty, setTicketQty] = useState(1);
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [bookingComplete, setBookingComplete] = useState(false);
 
-  if (!event) return <div>Event not found</div>;
+  const [tickets, setTickets] = useState(event.tickets);
+  const selectedTicket = tickets.find(t => t.id === selectedTicketId);
+
+  useEffect(() => {
+    // Update tickets when event changes (slug changes)
+    setTickets(event.tickets);
+    setSelectedTicketId(null);
+    setTicketQty(1);
+    setBookingComplete(false);
+  }, [event.slug]);
+
+  useEffect(() => {
+    const key = 'sarza_history';
+    const current = JSON.parse(localStorage.getItem(key) || '[]');
+    const updated = [event.slug, ...current.filter((s: string) => s !== event.slug)].slice(0, 20);
+    localStorage.setItem(key, JSON.stringify(updated));
+  }, [event.slug]);
+
+  const handleBooking = () => {
+    const user = localStorage.getItem('sarza_user');
+    if (!user) {
+      window.location.hash = '#/auth';
+      return;
+    }
+    setShowCheckout(true);
+  };
+
+  const confirmPayment = () => {
+    setIsProcessing(true);
+    // Simulate payment gateway delay
+    setTimeout(() => {
+      const bookingsKey = 'sarza_bookings';
+      const currentBookings = JSON.parse(localStorage.getItem(bookingsKey) || '[]');
+      const newBooking = {
+        id: `BK-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        eventSlug: event.slug,
+        eventName: event.name,
+        ticketName: selectedTicket?.name,
+        qty: ticketQty,
+        total: ((selectedTicket?.price || 0) + (selectedTicket?.fee || 150)) * ticketQty,
+        date: new Date().toISOString(),
+        status: 'confirmed'
+      };
+      
+      // Update local ticket inventory (simulated)
+      const updatedTickets = tickets.map(t => {
+        if (t.id === selectedTicketId) {
+          const newAvailable = Math.max(0, t.available - ticketQty);
+          return {
+            ...t,
+            available: newAvailable,
+            status: newAvailable === 0 ? 'sold_out' : (newAvailable < 10 ? 'selling_fast' : t.status)
+          };
+        }
+        return t;
+      });
+      setTickets(updatedTickets);
+      
+      localStorage.setItem(bookingsKey, JSON.stringify([newBooking, ...currentBookings]));
+      
+      setIsProcessing(false);
+      setBookingComplete(true);
+    }, 2000);
+  };
+
+  if (!event) return <div className="min-h-screen bg-charcoal flex items-center justify-center text-white">Event not found</div>;
 
   return (
     <div className="bg-charcoal min-h-screen font-body text-slate-200">
@@ -220,14 +289,14 @@ export const EventDetail: React.FC = () => {
                   <h3 className="font-heading text-2xl font-bold text-white mb-6 border-b border-white/10 pb-4">Select Experience</h3>
                   
                   <div className="space-y-4 mb-6">
-                      {event.tickets.map((ticket) => (
+                      {tickets.map((ticket) => (
                           <div 
                             key={ticket.id}
-                            onClick={() => ticket.status !== 'sold_out' && setSelectedTicket(ticket.id)}
+                            onClick={() => ticket.status !== 'sold_out' && setSelectedTicketId(ticket.id)}
                             className={`
                                 relative p-4 rounded-xl border-2 transition-all cursor-pointer
                                 ${ticket.status === 'sold_out' ? 'border-transparent bg-white/5 opacity-50 cursor-not-allowed' : 
-                                  selectedTicket === ticket.id ? 'border-teal bg-teal/10' : 'border-white/10 hover:border-white/30 bg-charcoal-dark'}
+                                  selectedTicketId === ticket.id ? 'border-teal bg-teal/10' : 'border-white/10 hover:border-white/30 bg-charcoal-dark'}
                             `}
                           >
                               {ticket.status === 'selling_fast' && (
@@ -263,10 +332,10 @@ export const EventDetail: React.FC = () => {
                   </div>
 
                   {/* Checkout Area */}
-                  {selectedTicket && (
+                  {selectedTicketId && (
                       <div className="animate-fade-in-up">
                           <div className="flex items-center justify-between mb-4 bg-charcoal-dark p-3 rounded-lg border border-white/5">
-                              <span className="text-sm">Quantity</span>
+                              <span className="text-sm text-slate-400">Quantity</span>
                               <div className="flex items-center gap-4">
                                   <button onClick={() => setTicketQty(Math.max(1, ticketQty - 1))} className="w-8 h-8 rounded bg-white/10 hover:bg-white/20 flex items-center justify-center font-bold">-</button>
                                   <span className="font-bold text-white">{ticketQty}</span>
@@ -282,11 +351,14 @@ export const EventDetail: React.FC = () => {
                           <div className="flex justify-between items-center text-xl font-bold text-white mb-6 pt-4 border-t border-white/10">
                               <span>Total</span>
                               <span>₹{(
-                                  (event.tickets.find(t => t.id === selectedTicket)?.price || 0) * ticketQty + (ticketQty * 150)
+                                  (selectedTicket?.price || 0) * ticketQty + (ticketQty * (selectedTicket?.fee || 150))
                               ).toLocaleString()}</span>
                           </div>
 
-                          <button className="w-full bg-teal hover:bg-teal-dark text-white font-heading font-bold py-4 rounded-xl shadow-lg transition-colors mb-4">
+                          <button 
+                            onClick={handleBooking}
+                            className="w-full bg-teal hover:bg-teal-dark text-white font-heading font-bold py-4 rounded-xl shadow-lg transition-all mb-4"
+                          >
                               Proceed to Pay
                           </button>
                           
@@ -296,7 +368,7 @@ export const EventDetail: React.FC = () => {
                       </div>
                   )}
                   
-                  {!selectedTicket && (
+                  {!selectedTicketId && (
                       <div className="text-center text-sm text-slate-500 py-4 italic">
                           Select a ticket tier to continue
                       </div>
@@ -324,6 +396,100 @@ export const EventDetail: React.FC = () => {
               </div>
           </div>
       </div>
+
+      {/* 5. CHECKOUT MODAL (Simulated) */}
+      {showCheckout && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => {
+                  if (!isProcessing) {
+                      setShowCheckout(false);
+                      setBookingComplete(false);
+                  }
+              }}></div>
+              <div className="relative bg-charcoal-dark border border-white/10 w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl">
+                  {bookingComplete ? (
+                      <div className="p-12 text-center">
+                          <div className="w-20 h-20 bg-teal/20 rounded-full flex items-center justify-center mx-auto mb-6 text-teal">
+                              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                              </svg>
+                          </div>
+                          <h2 className="text-3xl font-heading font-bold text-white mb-2">Booking Confirmed!</h2>
+                          <p className="text-slate-400 mb-8">Your digital tickets have been sent to your Gmail and added to your profile.</p>
+                          <button 
+                            onClick={() => {
+                                setShowCheckout(false);
+                                setBookingComplete(false);
+                                window.location.hash = '#/history';
+                            }}
+                            className="bg-teal hover:bg-teal-dark text-white px-8 py-3 rounded-full font-bold transition-all"
+                          >
+                              View My Tickets
+                          </button>
+                      </div>
+                  ) : (
+                      <>
+                          <div className="p-8 border-b border-white/10 flex justify-between items-center">
+                              <h3 className="text-xl font-bold text-white">Complete Secure Checkout</h3>
+                              <button onClick={() => {
+                                  setShowCheckout(false);
+                                  setBookingComplete(false);
+                              }} className="text-slate-500 hover:text-white">✕</button>
+                          </div>
+                          <div className="p-8 space-y-6">
+                              <div className="bg-charcoal p-4 rounded-xl border border-white/5 space-y-2">
+                                  <div className="flex justify-between text-sm">
+                                      <span className="text-slate-400">{event.name}</span>
+                                      <span className="text-white">₹{(selectedTicket?.price || 0) * ticketQty}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                      <span className="text-slate-400">Booking Fee x {ticketQty}</span>
+                                      <span className="text-white">₹{(ticketQty * (selectedTicket?.fee || 150)).toLocaleString()}</span>
+                                  </div>
+                                  <div className="pt-2 border-t border-white/10 flex justify-between font-bold">
+                                      <span className="text-white">Total Amount</span>
+                                      <span className="text-teal">₹{((selectedTicket?.price || 0) * ticketQty + (ticketQty * (selectedTicket?.fee || 150))).toLocaleString()}</span>
+                                  </div>
+                              </div>
+
+                              <div className="space-y-4">
+                                  <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Payment Method</div>
+                                  <div className="grid grid-cols-2 gap-3">
+                                      <div className="p-4 rounded-xl border border-teal bg-teal/5 flex items-center gap-3 cursor-pointer">
+                                          <div className="w-4 h-4 rounded-full border-4 border-teal"></div>
+                                          <span className="text-sm font-bold text-white">UPI / GPay</span>
+                                      </div>
+                                      <div className="p-4 rounded-xl border border-white/10 hover:border-white/20 flex items-center gap-3 cursor-pointer grayscale opacity-50">
+                                          <div className="w-4 h-4 rounded-full border-2 border-white/10"></div>
+                                          <span className="text-sm font-bold text-slate-400">Card</span>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <button 
+                                onClick={confirmPayment}
+                                disabled={isProcessing}
+                                className="w-full bg-teal hover:bg-teal-dark disabled:bg-teal/50 text-white font-heading font-bold py-4 rounded-xl shadow-lg shadow-teal/20 transition-all flex items-center justify-center gap-3"
+                              >
+                                  {isProcessing ? (
+                                      <>
+                                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                          Securing Payment...
+                                      </>
+                                  ) : (
+                                      <>Securely Pay ₹{((selectedTicket?.price || 0) * ticketQty + (ticketQty * 150)).toLocaleString()}</>
+                                  )}
+                              </button>
+                              <p className="text-[10px] text-center text-slate-500 flex items-center justify-center gap-1">
+                                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+                                  SSL Encrypted Transaction
+                              </p>
+                          </div>
+                      </>
+                  )}
+              </div>
+          </div>
+      )}
     </div>
   );
 };

@@ -92,13 +92,6 @@ export const EventList: React.FC = () => {
                     {EVENTS.map(event => (
                         <EventCard key={event.id} event={event} />
                     ))}
-                     {/* Repeating for grid fulness */}
-                     {EVENTS.map(event => (
-                        <EventCard key={`dup-${event.id}`} event={event} />
-                    ))}
-                     {EVENTS.map(event => (
-                        <EventCard key={`dup2-${event.id}`} event={event} />
-                    ))}
                 </div>
                 
                 {/* Pagination / Load More */}

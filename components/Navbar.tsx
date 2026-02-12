@@ -1,15 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Menu, User, Calendar } from 'lucide-react';
+import { supabase } from '../lib/supabaseClient';
 
 export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    // Check for user from Supabase
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser({
+          name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+          email: session.user.email
+        });
+      } else {
+        setUser(null);
+      }
+    };
+    
+    checkUser();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser({
+          name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+          email: session.user.email
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
@@ -34,15 +67,26 @@ export const Navbar: React.FC = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-6">
-          <button className="hidden md:flex items-center gap-2 text-sm font-semibold text-white hover:text-teal transition-colors">
+          <a href="#/history" className="hidden md:flex items-center gap-2 text-sm font-semibold text-white hover:text-teal transition-colors">
             <Calendar className="w-4 h-4" />
             <span className="hidden lg:inline">My Bookings</span>
-          </button>
+          </a>
           
-          <button className="flex items-center gap-2 text-sm font-semibold text-white hover:text-teal transition-colors">
-            <User className="w-5 h-5" />
-            <span className="hidden lg:inline">Sign In</span>
-          </button>
+          <a href="#/auth" className="flex items-center gap-2 text-sm font-semibold text-white hover:text-teal transition-colors">
+            {user ? (
+              <>
+                <div className="w-8 h-8 rounded-full bg-teal flex items-center justify-center text-xs font-bold">
+                  {user.name[0].toUpperCase()}
+                </div>
+                <span className="hidden lg:inline">{user.name.split(' ')[0]}</span>
+              </>
+            ) : (
+              <>
+                <User className="w-5 h-5" />
+                <span className="hidden lg:inline">Sign In</span>
+              </>
+            )}
+          </a>
           
           <button className="md:hidden text-white">
             <Menu className="w-6 h-6" />
