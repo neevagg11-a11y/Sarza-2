@@ -1,24 +1,84 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { EVENTS, VIBES } from '../constants';
 import { EventCard } from '../components/EventCard';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown, X } from 'lucide-react';
 
 export const Home: React.FC = () => {
+  const [showShowreel, setShowShowreel] = useState(false);
+  const [showDocu, setShowDocu] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const x = (e.clientX / window.innerWidth) - 0.5;
+      const y = (e.clientY / window.innerHeight) - 0.5;
+      setMousePos({ x, y });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <div className="bg-charcoal min-h-screen">
       
       {/* 1. HERO SECTION - Cinematic */}
       <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
-        {/* Background - In production, this would be a video loop */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://picsum.photos/seed/festivalcrowd/1920/1080" 
-            alt="Hero Background" 
-            className="w-full h-full object-cover opacity-60"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/50 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-charcoal/60 to-transparent"></div>
+        {/* Background Video with 3D Parallax Effect */}
+        <div 
+          className="absolute inset-0 z-0 transition-transform duration-200 ease-out"
+          style={{
+            transform: `scale(1.1) translate(${mousePos.x * 20}px, ${mousePos.y * 20}px) rotateX(${mousePos.y * -5}deg) rotateY(${mousePos.x * 5}deg)`,
+            perspective: '1000px'
+          }}
+        >
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="w-full h-full object-cover opacity-80"
+            onLoadedMetadata={(e) => (e.target as HTMLVideoElement).play()}
+          >
+            <source src="https://cdn.pixabay.com/video/2023/10/24/186358-877960161_large.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-charcoal/60 via-transparent to-transparent"></div>
+          
+          {/* Dynamic Glow Layer */}
+          <div 
+            className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-teal/30 via-transparent to-transparent pointer-events-none"
+            style={{
+              transform: `translate(${mousePos.x * -40}px, ${mousePos.y * -40}px)`
+            }}
+          ></div>
         </div>
+
+        {/* Video Overlays */}
+        {(showShowreel || showDocu) && (
+          <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center animate-fade-in">
+            <button 
+              onClick={() => { setShowShowreel(false); setShowDocu(false); }}
+              className="absolute top-8 right-8 text-white hover:text-teal z-[110] bg-black/50 p-2 rounded-full backdrop-blur-md transition-colors"
+            >
+              <X className="w-8 h-8" />
+            </button>
+            <div className="w-full h-full max-w-6xl max-h-[80vh] px-4">
+              <video 
+                autoPlay 
+                controls 
+                className="w-full h-full rounded-2xl shadow-2xl"
+              >
+                <source 
+                  src={showShowreel 
+                    ? "https://cdn.pixabay.com/video/2021/08/04/83956-584735313_large.mp4" 
+                    : "https://cdn.pixabay.com/video/2023/10/24/186358-877960161_large.mp4"
+                  } 
+                  type="video/mp4" 
+                />
+              </video>
+            </div>
+          </div>
+        )}
 
         <div className="relative z-10 container mx-auto px-4 text-center">
             <div className="inline-block mb-4 px-4 py-1 rounded-full border border-white/30 bg-white/5 backdrop-blur-md">
@@ -38,7 +98,10 @@ export const Home: React.FC = () => {
                 >
                     Find Yours <ArrowRight className="w-4 h-4" />
                 </button>
-                <button className="text-white font-heading font-semibold py-4 px-8 flex items-center gap-2 hover:text-teal transition-colors">
+                <button 
+                  onClick={() => setShowShowreel(true)}
+                  className="text-white font-heading font-semibold py-4 px-8 flex items-center gap-2 hover:text-teal transition-colors"
+                >
                    Watch Showreel <div className="w-8 h-8 rounded-full border-2 border-current flex items-center justify-center">▶</div>
                 </button>
             </div>
@@ -63,11 +126,7 @@ export const Home: React.FC = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {VIBES.map((vibe) => (
-                    <div
-                      key={vibe.id}
-                      className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer"
-                      onClick={() => (window.location.hash = '#/events')}
-                    >
+                    <div key={vibe.id} className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer">
                         <img src={vibe.image} alt={vibe.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
                         <div className="absolute bottom-0 left-0 p-4 w-full">

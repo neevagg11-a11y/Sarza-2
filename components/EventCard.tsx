@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MapPin, Users, Music } from 'lucide-react';
 import { Event } from '../types';
 
@@ -8,22 +8,38 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, featured = false }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <div 
       className={`group relative bg-charcoal rounded-xl overflow-hidden shadow-md hover:shadow-2xl hover:shadow-teal/20 transition-all duration-300 cursor-pointer border border-white/5 ${featured ? 'min-w-[350px]' : 'w-full'}`}
       onClick={() => window.location.hash = `#/event/${event.slug}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Image Container */}
       <div className="relative aspect-[16/9] overflow-hidden">
-        <img 
-          src={event.image} 
-          alt={event.name} 
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
+        {isHovered && event.videoPreview ? (
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="w-full h-full object-cover"
+          >
+            <source src={event.videoPreview} type="video/mp4" />
+          </video>
+        ) : (
+          <img 
+            src={event.image} 
+            alt={event.name} 
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        )}
         
-        {/* Hover Overlay Video Preview (Simulated with dark overlay) */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div className="text-white text-xs font-bold uppercase tracking-widest border border-white px-3 py-1 rounded-sm">
+        {/* Hover Overlay Video Preview */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <div className="text-white text-xs font-bold uppercase tracking-widest border border-white px-3 py-1 rounded-sm backdrop-blur-sm">
                 Watch Preview
             </div>
         </div>
