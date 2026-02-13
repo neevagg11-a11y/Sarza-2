@@ -7,63 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              heading: ['League Spartan', 'sans-serif'],
-              body: ['Montserrat', 'sans-serif'], // Using Montserrat as a close free alternative to Gotham
-            },
-            colors: {
-              teal: {
-                DEFAULT: '#0D9488', // Deep Teal - Primary actions
-                dark: '#0f766e',
-              },
-              terracotta: {
-                DEFAULT: '#EA580C', // Urgency
-              },
-              charcoal: {
-                DEFAULT: '#1E293B', // Dark sections
-                light: '#334155',
-                dark: '#0f172a'
-              },
-              gold: '#F59E0B',
-              slate: '#64748B',
-              cream: '#FFFBEB',
-            },
-            animation: {
-              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-      body {
-        background-color: #0f172a; /* deeply dark background */
-        color: #f8fafc;
-        font-family: 'Montserrat', sans-serif;
-      }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'League Spartan', sans-serif;
-      }
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #1E293B; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #0D9488; 
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #0f766e; 
-      }
-    </style>
 </head>
   <body>
     <div id="root"></div>
