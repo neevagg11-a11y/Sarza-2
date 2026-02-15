@@ -52,6 +52,6 @@ export interface VibeCategory {
   id: string;
   name: string;
   description: string;
-  icon: string;
+  icon: any; // Changed from string to any for Lucide icons
   image: string;
 }

@@ -1,12 +1,56 @@
 import { Event, VibeCategory } from './types';
+import { 
+  Zap, 
+  Sparkles, 
+  Palette, 
+  Compass, 
+  Flame, 
+  Waves 
+} from 'lucide-react';
 
 export const VIBES: VibeCategory[] = [
-  { id: 'underground', name: 'Underground & Raw', description: 'Techno, Industrial', icon: '🌀', image: 'https://picsum.photos/seed/techno/400/600' },
-  { id: 'euphoric', name: 'Euphoric & Uplifting', description: 'Progressive House, Trance', icon: '✨', image: 'https://picsum.photos/seed/trance/400/600' },
-  { id: 'artsy', name: 'Artsy & Avant-Garde', description: 'Experimental, Installations', icon: '🎨', image: 'https://picsum.photos/seed/art/400/600' },
-  { id: 'spiritual', name: 'Conscious & Spiritual', description: 'Wellness, Ecstatic Dance', icon: '🧘', image: 'https://picsum.photos/seed/yoga/400/600' },
-  { id: 'high-energy', name: 'High-Energy', description: 'Hard Techno, Psytrance', icon: '🔥', image: 'https://picsum.photos/seed/fire/400/600' },
-  { id: 'chill', name: 'Chill & Melodic', description: 'Downtempo, Organic', icon: '🌊', image: 'https://picsum.photos/seed/chill/400/600' },
+  { 
+    id: 'underground', 
+    name: 'Underground & Raw', 
+    description: 'Techno, Industrial', 
+    icon: Zap, 
+    image: 'https://picsum.photos/seed/vibe-underground/1200/800' 
+  },
+  { 
+    id: 'euphoric', 
+    name: 'Euphoric & Uplifting', 
+    description: 'Progressive House, Trance', 
+    icon: Sparkles, 
+    image: 'https://picsum.photos/seed/vibe-euphoric/1200/800' 
+  },
+  { 
+    id: 'artsy', 
+    name: 'Artsy & Avant-Garde', 
+    description: 'Experimental, Installations', 
+    icon: Palette, 
+    image: 'https://picsum.photos/seed/vibe-artsy/1200/800' 
+  },
+  { 
+    id: 'spiritual', 
+    name: 'Conscious & Spiritual', 
+    description: 'Wellness, Ecstatic Dance', 
+    icon: Compass, 
+    image: 'https://picsum.photos/seed/vibe-spiritual/1200/800' 
+  },
+  { 
+    id: 'high-energy', 
+    name: 'High-Energy', 
+    description: 'Hard Techno, Psytrance', 
+    icon: Flame, 
+    image: 'https://picsum.photos/seed/vibe-highenergy/1200/800' 
+  },
+  { 
+    id: 'chill', 
+    name: 'Chill & Melodic', 
+    description: 'Downtempo, Organic', 
+    icon: Waves, 
+    image: 'https://picsum.photos/seed/vibe-chill/1200/800' 
+  },
 ];
 
 export const EVENTS: Event[] = [
@@ -18,7 +62,7 @@ export const EVENTS: Event[] = [
     date: 'Sat, Mar 15 • 10 PM',
     venue: 'Mehboob Studio',
     city: 'Mumbai',
-    image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://picsum.photos/seed/event-sunburn/2070/1200',
     videoPreview: 'https://cdn.pixabay.com/video/2023/10/24/186358-877960161_large.mp4',
     musicalIdentity: ['Techno', 'Melodic House', 'Progressive'],
     vibeTags: ['Underground', 'High-Energy'],
@@ -80,7 +124,7 @@ export const EVENTS: Event[] = [
     date: 'Sun, Apr 10 • 4 PM',
     venue: 'Embassy Riding School',
     city: 'Bangalore',
-    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://picsum.photos/seed/event-echoes/2070/1200',
     videoPreview: 'https://cdn.pixabay.com/video/2021/08/04/83956-584735313_large.mp4',
     musicalIdentity: ['Live', 'Jazz', 'Electronica'],
     vibeTags: ['Sustainable', 'Chill', 'Artsy'],
@@ -105,7 +149,7 @@ export const EVENTS: Event[] = [
     date: 'Dec 15-17',
     venue: 'Alsisar Mahal',
     city: 'Rajasthan',
-    image: 'https://images.unsplash.com/photo-1459749411177-042180ce673c?q=80&w=2070&auto=format&fit=crop',
+    image: 'https://picsum.photos/seed/event-magnetic/2070/1200',
     videoPreview: 'https://cdn.pixabay.com/video/2023/10/24/186358-877960161_large.mp4',
     musicalIdentity: ['Techno', 'House', 'Ambient'],
     vibeTags: ['Cultural', 'Theatrical', 'Immersive'],

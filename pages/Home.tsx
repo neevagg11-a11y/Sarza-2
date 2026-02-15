@@ -20,198 +20,185 @@ export const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-charcoal min-h-screen">
+    <div className="bg-black min-h-screen selection:bg-teal selection:text-black">
       
-      {/* 1. HERO SECTION - Cinematic */}
-      <section className="relative h-screen w-full overflow-hidden flex items-center justify-center">
-        {/* Background Video with 3D Parallax Effect */}
-        <div 
-          className="absolute inset-0 z-0 transition-transform duration-200 ease-out"
-          style={{
-            transform: `scale(1.1) translate(${mousePos.x * 20}px, ${mousePos.y * 20}px) rotateX(${mousePos.y * -5}deg) rotateY(${mousePos.x * 5}deg)`,
-            perspective: '1000px'
-          }}
-        >
+      {/* 1. HERO SECTION - Cinematic & Bold */}
+      <section className="relative min-h-[85vh] md:min-h-screen w-full overflow-hidden flex items-center py-16">
+        {/* Showreel Modal */}
+        {showShowreel && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="relative w-full max-w-5xl">
+              <button
+                onClick={() => setShowShowreel(false)}
+                className="absolute -top-12 right-0 text-white/70 hover:text-white"
+                aria-label="Close"
+              >
+                <X className="w-8 h-8" />
+              </button>
+              <div className="aspect-video bg-black rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+                <video autoPlay controls className="w-full h-full object-cover">
+                  <source src="https://cdn.pixabay.com/video/2023/10/24/186358-877960161_large.mp4" type="video/mp4" />
+                </video>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Background Video with subtle overlay */}
+        <div className="absolute inset-0 z-0">
           <video 
             autoPlay 
             muted 
             loop 
             playsInline
-            className="w-full h-full object-cover opacity-80"
-            onLoadedMetadata={(e) => (e.target as HTMLVideoElement).play()}
+            className="w-full h-full object-cover opacity-60 scale-105"
           >
             <source src="https://cdn.pixabay.com/video/2023/10/24/186358-877960161_large.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/20 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-charcoal/60 via-transparent to-transparent"></div>
-          
-          {/* Dynamic Glow Layer */}
-          <div 
-            className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-teal/30 via-transparent to-transparent pointer-events-none"
-            style={{
-              transform: `translate(${mousePos.x * -40}px, ${mousePos.y * -40}px)`
-            }}
-          ></div>
+          {/* Multi-layered overlays for depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent opacity-60"></div>
+          <div className="absolute inset-0 bg-black/40"></div>
         </div>
 
-        {/* Video Overlays */}
-        {(showShowreel || showDocu) && (
-          <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center animate-fade-in">
-            <button 
-              onClick={() => { setShowShowreel(false); setShowDocu(false); }}
-              className="absolute top-8 right-8 text-white hover:text-teal z-[110] bg-black/50 p-2 rounded-full backdrop-blur-md transition-colors"
-            >
-              <X className="w-8 h-8" />
-            </button>
-            <div className="w-full h-full max-w-6xl max-h-[80vh] px-4">
-              <video 
-                autoPlay 
-                controls 
-                className="w-full h-full rounded-2xl shadow-2xl"
-              >
-                <source 
-                  src={showShowreel 
-                    ? "https://cdn.pixabay.com/video/2021/08/04/83956-584735313_large.mp4" 
-                    : "https://cdn.pixabay.com/video/2023/10/24/186358-877960161_large.mp4"
-                  } 
-                  type="video/mp4" 
-                />
-              </video>
-            </div>
-          </div>
-        )}
-
-        <div className="relative z-10 container mx-auto px-4 text-center">
-            <FadeIn delay={0.2}>
-                <div className="inline-block mb-4 px-4 py-1 rounded-full border border-white/30 bg-white/5 backdrop-blur-md">
-                    <span className="text-xs font-bold tracking-[0.2em] text-teal-300 uppercase">Next Gen Ticketing</span>
+        <div className="relative z-10 container mx-auto px-6 md:px-12">
+            <div className="max-w-5xl">
+                <div className="inline-flex items-center gap-2 mb-8 px-3 py-1 rounded-sm bg-white text-black font-black text-[10px] uppercase tracking-[0.3em]">
+                    <span>The Future of Discovery</span>
                 </div>
-            </FadeIn>
-            
-            <FadeIn delay={0.4}>
-                <h1 className="font-heading font-bold text-5xl md:text-7xl lg:text-8xl text-white mb-6 leading-tight">
-                    Every Event <br/> Has a Soul.
+                
+                <h1 className="font-display font-black text-6xl md:text-[10rem] lg:text-[12rem] text-white mb-8 leading-[0.85] tracking-tightest uppercase">
+                    Every Event <br/> 
+                    <span className="text-stroke hover:text-white transition-all duration-700 cursor-default">Has a Soul.</span>
                 </h1>
-            </FadeIn>
-            
-            <FadeIn delay={0.6}>
-                <p className="font-body text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-                    Don't just buy a ticket. Discover the vibe, understand the crowd, and find the experiences that match your energy.
-                </p>
-            </FadeIn>
-            
-            <FadeIn delay={0.8}>
-                <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-                    <button 
-                      onClick={() => window.location.hash = '#/events'}
-                      className="bg-teal hover:bg-teal-dark text-white font-heading font-bold py-4 px-8 rounded-full shadow-lg shadow-teal/20 transition-all hover:scale-105 flex items-center gap-2"
-                    >
-                        Find Yours <ArrowRight className="w-4 h-4" />
-                    </button>
-                    <button 
-                      onClick={() => setShowShowreel(true)}
-                      className="text-white font-heading font-semibold py-4 px-8 flex items-center gap-2 hover:text-teal transition-colors"
-                    >
-                       Watch Showreel <div className="w-8 h-8 rounded-full border-2 border-current flex items-center justify-center">▶</div>
-                    </button>
+                
+                <div className="flex flex-col gap-6 mt-8 md:mt-6">
+                    <div className="flex flex-wrap gap-6 items-center">
+                        <button 
+                            onClick={() => window.location.hash = '#/events'}
+                            className="group relative overflow-hidden bg-teal text-black font-black py-5 px-10 rounded-full text-sm uppercase tracking-widest transition-all hover:pr-14"
+                        >
+                            <span className="relative z-10 flex items-center gap-2">
+                                Get In <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                            </span>
+                        </button>
+                        
+                        <button 
+                            onClick={() => setShowShowreel(true)}
+                            className="group flex items-center gap-4 text-white font-black text-sm uppercase tracking-widest hover:text-teal transition-colors"
+                        >
+                            <div className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center group-hover:border-teal group-hover:bg-teal group-hover:text-black transition-all duration-300">
+                                <div className="ml-1 w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-current border-b-[8px] border-b-transparent"></div>
+                            </div>
+                            <span>Showreel</span>
+                        </button>
+                    </div>
+                    
+                    <p className="font-sans font-medium text-lg md:text-xl text-white/60 max-w-md leading-relaxed">
+                        Don't just buy a ticket. Discover the vibe, understand the crowd, and find the experiences that match your energy.
+                    </p>
                 </div>
-            </FadeIn>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white/50 animate-bounce">
-            <span className="text-xs uppercase tracking-widest mb-2 block text-center">Discover</span>
-            <ChevronDown className="w-6 h-6 mx-auto" />
+            </div>
         </div>
       </section>
 
-      {/* 2. DISCOVER BY VIBE */}
-      <section className="py-20 bg-charcoal relative">
-        <div className="container mx-auto px-4">
-            <FadeIn>
-                <div className="flex justify-between items-end mb-12">
-                    <div>
-                        <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-3">Discover By Vibe</h2>
-                        <p className="text-slate-400 font-body">Curated experiences for every mood.</p>
-                    </div>
+      {/* 2. DISCOVER BY VIBE (RA Editorial Style) */}
+      <section className="py-32 bg-black">
+        <div className="container mx-auto px-6 md:px-12">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+                <div className="max-w-2xl">
+                    <h2 className="text-4xl md:text-6xl font-display font-black text-white mb-6 uppercase tracking-tighter">Find Your Community</h2>
+                    <p className="text-white/40 font-sans text-lg font-medium leading-relaxed">
+                        Beyond genres. We categorize events by the energy they emit, the crowd they attract, and the memories they leave behind.
+                    </p>
                 </div>
-            </FadeIn>
+                <div className="flex gap-4">
+                    <div className="h-[1px] w-24 bg-white/20 self-center"></div>
+                    <span className="text-white/40 text-xs font-black uppercase tracking-[0.3em]">Explore All Vibes</span>
+                </div>
+            </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
                 {VIBES.map((vibe, index) => (
-                    <FadeIn key={vibe.id} delay={index * 0.1}>
-                        <div className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer">
-                            <img src={vibe.image} alt={vibe.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
-                            <div className="absolute bottom-0 left-0 p-4 w-full">
-                                <div className="text-2xl mb-1">{vibe.icon}</div>
-                                <h3 className="text-white font-heading font-bold text-lg leading-tight group-hover:text-teal transition-colors">{vibe.name}</h3>
-                                <div className="h-0 group-hover:h-auto overflow-hidden transition-all duration-300">
-                                    <p className="text-xs text-slate-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity delay-100">{vibe.description}</p>
-                                </div>
+                    <div key={vibe.id} className="group relative aspect-[4/5] overflow-hidden cursor-pointer bg-neutral-900 border border-white/5">
+                        <img 
+                            src={vibe.image} 
+                            alt={vibe.name} 
+                            className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-105 opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-80" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
+                        
+                        <div className="absolute inset-0 p-10 flex flex-col justify-end">
+                            <div className="mb-6 w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-all duration-500">
+                                <vibe.icon className="w-5 h-5" />
                             </div>
+                            
+                            <h3 className="text-white font-display font-black text-3xl uppercase tracking-tighter mb-2 group-hover:translate-x-2 transition-transform duration-500">
+                                {vibe.name}
+                            </h3>
+                            <p className="text-white/40 font-sans text-sm font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-500 delay-75">
+                                {vibe.description}
+                            </p>
                         </div>
-                    </FadeIn>
+                        
+                        {/* RA-style index number */}
+                        <div className="absolute top-10 right-10 text-white/10 font-display font-black text-6xl italic group-hover:text-white/20 transition-colors">
+                            0{index + 1}
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>
       </section>
 
-      {/* 3. FEATURED EVENTS (Netflix Carousel Style) */}
-      <section className="py-20 bg-charcoal-dark border-t border-white/5">
-        <div className="container mx-auto px-4">
-             <FadeIn>
-                <div className="flex justify-between items-center mb-10">
-                    <h2 className="text-3xl md:text-4xl font-heading font-bold text-white">Trending This Week <span className="text-terracotta text-2xl align-top">🔥</span></h2>
-                    <button className="text-teal hover:text-white transition-colors text-sm font-bold uppercase tracking-wider">View All</button>
+      {/* 3. FEATURED EVENTS (DICE Grid Style) */}
+      <section className="py-32 bg-black border-t border-white/5">
+        <div className="container mx-auto px-6 md:px-12">
+             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
+                <div>
+                    <h2 className="text-4xl md:text-6xl font-display font-black text-white mb-4 uppercase tracking-tighter">Trending Now</h2>
+                    <p className="text-white/40 font-sans text-lg font-medium leading-relaxed">The most anticipated experiences happening this week.</p>
                 </div>
-             </FadeIn>
+                <button className="group flex items-center gap-3 text-white font-black text-xs uppercase tracking-[0.3em] hover:text-teal transition-colors">
+                    View All Events
+                    <div className="w-8 h-[1px] bg-white/20 group-hover:w-12 group-hover:bg-teal transition-all"></div>
+                </button>
+            </div>
 
-            <FadeIn direction="none" delay={0.2}>
-                <div className="flex overflow-x-auto pb-8 gap-6 snap-x snap-mandatory scrollbar-hide">
-                    {EVENTS.map((event) => (
-                        <div key={event.id} className="snap-start shrink-0 w-[85vw] md:w-[350px]">
-                            <EventCard event={event} featured={true} />
-                        </div>
-                    ))}
-                    {/* Mock duplicates to show scroll */}
-                     {EVENTS.map((event) => (
-                        <div key={`${event.id}-dup`} className="snap-start shrink-0 w-[85vw] md:w-[350px]">
-                            <EventCard event={event} featured={true} />
-                        </div>
-                    ))}
-                </div>
-            </FadeIn>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {EVENTS.map((event) => (
+                    <div key={event.id}>
+                        <EventCard event={event} featured={true} />
+                    </div>
+                ))}
+            </div>
         </div>
       </section>
 
       {/* 4. RISING TALENT / PROMOTIONAL SECTION */}
       <section className="py-20 bg-charcoal">
           <div className="container mx-auto px-4">
-              <FadeIn direction="up">
-                  <div className="bg-gradient-to-br from-charcoal-light to-charcoal border border-white/5 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
-                      <div className="md:w-1/2">
-                          <span className="text-terracotta font-bold text-xs tracking-widest uppercase mb-2 block">Featured Series</span>
-                          <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-6">Sunburn Reload: The Documentary</h2>
-                          <p className="text-slate-300 font-body mb-8 text-lg">
-                              Before you step onto the dance floor, witness the journey. 4 editions, 8,500 attendees, one massive cultural movement.
-                          </p>
-                          <button className="bg-white text-charcoal font-bold py-3 px-8 rounded-full hover:bg-slate-200 transition-colors">
-                              Watch The Story
-                          </button>
-                      </div>
-                      <div className="md:w-1/2 relative">
-                           <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-2xl shadow-teal/10 border border-white/10 relative group cursor-pointer">
-                                <img src="https://picsum.photos/seed/docu/800/450" alt="Documentary" className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity" />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center pl-1 group-hover:scale-110 transition-transform">
-                                        <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1"></div>
-                                    </div>
-                                </div>
-                           </div>
-                      </div>
+              <div className="bg-gradient-to-br from-charcoal-light to-charcoal border border-white/5 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
+                  <div className="md:w-1/2">
+                      <span className="text-terracotta font-bold text-xs tracking-widest uppercase mb-2 block">Featured Series</span>
+                      <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-6">Sunburn Reload: The Documentary</h2>
+                      <p className="text-slate-300 font-body mb-8 text-lg">
+                          Before you step onto the dance floor, witness the journey. 4 editions, 8,500 attendees, one massive cultural movement.
+                      </p>
+                      <button className="bg-white text-charcoal font-bold py-3 px-8 rounded-full hover:bg-slate-200 transition-colors">
+                          Watch The Story
+                      </button>
                   </div>
-              </FadeIn>
+                  <div className="md:w-1/2 relative">
+                       <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-2xl shadow-teal/10 border border-white/10 relative group cursor-pointer">
+                            <img src="https://picsum.photos/seed/docu/800/450" alt="Documentary" className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center pl-1 group-hover:scale-110 transition-transform">
+                                    <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1"></div>
+                                </div>
+                            </div>
+                       </div>
+                  </div>
+              </div>
           </div>
       </section>
 

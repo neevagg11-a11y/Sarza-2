@@ -2,7 +2,9 @@
 export default {
   content: [
     "./index.html",
-    "./*.{js,ts,jsx,tsx}",
+    "./index.tsx",
+    "./App.tsx",
+    "./constants.ts",
     "./components/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./lib/**/*.{js,ts,jsx,tsx}",
@@ -10,37 +12,40 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: '#0D9488',
-          dark: '#0F766E',
-          light: '#5EEAD4',
-        },
-        secondary: {
-          DEFAULT: '#EA580C',
-          dark: '#C2410C',
-          light: '#FB923C',
-        },
-        accent: '#F59E0B',
-        dark: {
-          DEFAULT: '#0F172A',
-          lighter: '#1E293B',
-        },
-        // Preserve existing colors from index.html if they differ
         teal: {
-          DEFAULT: '#0D9488',
-          dark: '#0f766e',
+          DEFAULT: '#00F5D4', // Brighter, more "neon" teal
+          dark: '#00D1B2',
+          light: '#79FFE1',
         },
         charcoal: {
-          DEFAULT: '#1E293B',
-          light: '#334155',
-          dark: '#0f172a'
+          DEFAULT: '#111111', // Deeper black
+          light: '#1A1A1A',
+          dark: '#050505',
         },
+        terracotta: {
+          DEFAULT: '#FF4D00', // More vibrant orange-red
+          dark: '#D13F00',
+          light: '#FF7D47',
+        },
+        dark: {
+          DEFAULT: '#000000',
+          lighter: '#0A0A0A',
+        },
+        accent: {
+          pink: '#FF007A',
+          purple: '#7000FF',
+        }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
         heading: ['League Spartan', 'sans-serif'],
-        body: ['Montserrat', 'sans-serif'],
+        display: ['League Spartan', 'sans-serif'], // For extra large headings
+        body: ['Inter', 'sans-serif'], // Simplified to Inter for better legibility
       },
+      letterSpacing: {
+        tightest: '-0.05em',
+        tighter: '-0.03em',
+      }
     },
   },
   plugins: [],

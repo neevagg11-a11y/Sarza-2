@@ -17,6 +17,7 @@ const ScrollToTop = () => {
 };
 
 const App: React.FC = () => {
+  /*
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -40,6 +41,7 @@ const App: React.FC = () => {
       lenis.destroy();
     };
   }, []);
+  */
 
   return (
     <Router>
